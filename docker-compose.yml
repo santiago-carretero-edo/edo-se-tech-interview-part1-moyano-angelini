@@ -1,0 +1,30 @@
+version: '3.2'
+
+services:
+  battleship_service:
+    build:
+      context: ./battleship-service
+    container_name: battleship_service
+    depends_on:
+      - kafka
+    ports:
+      - 8080:8080
+      - 8787:8787
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/battleship-service/api/engineering/ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 200
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+networks:
+  default:
+    external:
+      name: battleship_net
