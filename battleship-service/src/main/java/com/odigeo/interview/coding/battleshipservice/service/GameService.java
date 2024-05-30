@@ -8,6 +8,7 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
 import com.odigeo.interview.coding.battleshipservice.model.Game;
+import com.odigeo.interview.coding.battleshipservice.model.vessels.Vessel;
 import com.odigeo.interview.coding.battleshipservice.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Singleton
@@ -24,6 +26,9 @@ public class GameService {
 
     @Inject
     private GameRepository repository;
+
+
+    private static final VesselsService vesselsService = new VesselsService();
 
     public Game newGame(GameStartCommand command) {
         Game game = new Game();
@@ -49,6 +54,7 @@ public class GameService {
 
     public void deployShips(String gameId, DeployShipsCommand command) {
         Game game = repository.getGame(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
+        List<Vessel> vessels = vesselsService.buildVessels(command);
 
         // Insert your code here
 
